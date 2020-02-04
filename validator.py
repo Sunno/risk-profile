@@ -16,7 +16,7 @@ SCHEMA = {
         'age': {'type': 'integer', 'minimum': 0},
         'dependents': {'type': 'integer', 'minimum': 0},
         'house': {
-            'type': ['object'],
+            'type': ['object', 'null'],
             'properties': {
                 'ownership_status': {
                     'type': 'string',
