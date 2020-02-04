@@ -32,9 +32,12 @@ SCHEMA = {
             'minItems': 3
         },
         'vehicle': {
-            'type': 'object',
+            'type': ['object', 'null'],
             'properties': {
-                'year': {'type': 'integer'}
+                'year': {
+                    'type': 'integer',
+                    'minimum': 0
+                }
             }
         }
     }
