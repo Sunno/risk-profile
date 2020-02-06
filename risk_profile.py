@@ -2,6 +2,9 @@ import datetime
 
 
 class RiskProfileCalculator(object):
+    """
+    This class calculates all the risk score
+    """
     INELIGIBLE = 'ineligible'
     REGULAR = 'regular'
     ECONOMIC = 'economic'
@@ -33,9 +36,9 @@ class RiskProfileCalculator(object):
             return self.RESPONSIBLE
 
     def _calculate_auto(self):
-        score = self._base_score
         if not self.__have_income_vehicle_houses:  # 1
             return self.INELIGIBLE
+        score = self._base_score
 
         current_year = datetime.datetime.now().year
 
@@ -46,47 +49,52 @@ class RiskProfileCalculator(object):
         return self.__process_score(score)
 
     def _calculate_disability(self):
-        score = self._base_score
         if not self.__have_income_vehicle_houses:  # 1
             return self.INELIGIBLE
 
         if self.__is_over_60:  # 2
             return self.INELIGIBLE
+        score = self._base_score
 
-        if self._data['house'] == 'mortgaged':  # 5
-            score += 1
+        if self._data['house']:
+            if self._data['house']['ownership_statul'] == 'mortgaged':  # 5
+                score += 1
 
         if self._data['dependents'] > 0:  # 6
             score += 1
 
-        if self._data['marital_status']:  # 7
+        if self._data['marital_status'] == 'married':  # 7
             score -= 1
 
         return self.__process_score(score)
 
     def _calculate_home(self):
-        score = self._base_score
         if not self.__have_income_vehicle_houses:  # 1
             return self.INELIGIBLE
 
-        if self._data['house'] == 'mortgaged':  # 5
-            score += 1
+        score = self._base_score
+        if self._data['house']:
+            if self._data['house']['ownership_statul'] == 'mortgaged':  # 5
+                score += 1
         return self.__process_score(score)
 
     def _calculate_life(self):
-        score = self._base_score
         if self.__is_over_60:  # 2
             return self.INELIGIBLE
+        score = self._base_score
 
         if self._data['dependents'] > 0:  # 6
             score += 1
 
-        if self._data['marital_status']:  # 7
+        if self._data['marital_status'] == 'married':  # 7
             score += 1
 
         return self.__process_score(score)
 
     def calculate(self):
+        '''
+        Returns risk score calculation according to validated data provided
+        '''
         return {
             'auto': self._calculate_auto(),
             'disability': self._calculate_disability(),
